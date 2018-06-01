@@ -15,7 +15,7 @@ class JsonDB {
 	// insert 
 	public function insert(array $row) {
 		$rows = $this->findAll(true);
-		$rows[] = $row;
+		$rows = $rows + $row;
 		$this->save($rows);
 	}
 	
@@ -60,7 +60,7 @@ class JsonDB {
 	}	
 
 	private function save($data) {
-		file_put_contents($this->filename,json_encode($data));
+		file_put_contents($this->filename,json_encode($data, JSON_PRETTY_PRINT));
 	}
 	
 	private function createEmpty() {
