@@ -48,6 +48,7 @@ class JsonDB {
 		if(!file_exists($this->filename)) $this->createEmpty();
 		
 		$rows = json_decode(file_get_contents($this->filename),$toArray);
+		
 		return $rows;
 	}
 	
@@ -105,7 +106,3 @@ class JsonDB {
 
 
 <?php 
-
-$jsonDB = new JsonDB('data.json');
-
-print($jsonDB->getLastID());
