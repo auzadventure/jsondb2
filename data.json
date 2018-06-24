@@ -1,1 +1,17 @@
-[{"name":"john","last":"snow"},{"name":"john","last":"snow the 3rd"},{"name":"john","last":"tan"},{"name":"john","last":"tan"}]
+{
+    "data": {
+        "1": {
+            "name": "john"
+        },
+        "2": {
+            "name": "phile"
+        },
+        "3": {
+            "name": "rambo",
+            "title": "hero"
+        }
+    },
+    "conf": {
+        "lastID": 3
+    }
+}

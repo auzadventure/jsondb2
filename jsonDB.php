@@ -15,13 +15,20 @@ class JsonDB {
 	// insert 
 	public function insert(array $row) {
 		$rows = $this->findAll(true);
-		$rows = $rows + $row;
+		$lastID = $this->getLastID();
+		$_lastID = $lastID + 1; 
+		$_row = [$_lastID=>$row]; 
+
+		$rows['data'] = $rows['data'] + $_row;
+		$rows['conf'] = ['lastID'=>$_lastID]; 
 		$this->save($rows);
-	}
 	
 
+	}
+	
+	
 	public function find(string $field, string $val) {
-		$rows = $this->findAll();
+		$rows = $this->findAll()->data;
 
 		foreach($rows as $row) {
 			if($row->$field == $val) {
@@ -29,6 +36,11 @@ class JsonDB {
 			}
 		}
 		return [];
+	}
+	
+	public function findOne($id) {
+		
+		return $this->findAll()->data->$id ?? "Not Found";
 	}
 
 	
@@ -39,32 +51,50 @@ class JsonDB {
 		return $rows;
 	}
 	
+	
+	
 
+	public function getLastID() {	
+		$rows = $this->findAll();
+		$lastID = $rows->conf->lastID;
+		return $lastID;
+	}
 	
 
 	
 	public function delete(string $field, string $val) {
-		$rows = $this->findAll();
+		$data = $this->findAll();
+		$rows = $data->data;
 		$_rows = [];
 		$isDelete = false;
 		
 		foreach($rows as $row) {
 			if($row->$field != $val) {
-				$_rows = $row;
+				$_rows[] = $row;
 			}
 			else $isDelete = true;
 			
 		}
-		$this->save($_rows);
+		
+		$data->data = $_rows; 
+		
+		$this->save($data);
 		return $isDelete; 
 	}	
+	
+	public function deleteByID($id) {
+		$data = $this->findAll(); 
+		unset($data->data->{$id});
+		$this->save($data);
+		
+	}
 
 	private function save($data) {
 		file_put_contents($this->filename,json_encode($data, JSON_PRETTY_PRINT));
 	}
 	
 	private function createEmpty() {
-		$a = [];
+		$a = ['data'=>[],'conf'=>['lastID'=>0]];
 		$str = json_encode($a);
 		file_put_contents($this->filename,$str);
 	}
@@ -77,7 +107,5 @@ class JsonDB {
 <?php 
 
 $jsonDB = new JsonDB('data.json');
-$a = [ 'name'=>'john','last'=>'snow'];
-//$jsonDB->insert($a); 
 
-print_r($a);
+print($jsonDB->getLastID());
